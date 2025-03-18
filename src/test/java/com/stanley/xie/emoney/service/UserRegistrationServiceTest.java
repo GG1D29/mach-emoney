@@ -27,7 +27,7 @@ class UserRegistrationServiceTest {
         String token = userRegistrationService.register("username");
         assertThat(token).isNotEmpty();
 
-        Mockito.verify(userService).saveUser(eq("username"), anyString());
+        Mockito.verify(userService).createUser(eq("username"), anyString());
     }
 
     @Test
@@ -35,7 +35,7 @@ class UserRegistrationServiceTest {
         Mockito.when(userService.isExist("username")).thenReturn(true);
         assertThrows(DuplicateUsernameException.class, () -> userRegistrationService.register("username"));
 
-        Mockito.verify(userService, never()).saveUser(eq("username"), anyString());
+        Mockito.verify(userService, never()).createUser(eq("username"), anyString());
     }
 
 }

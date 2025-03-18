@@ -1,15 +1,13 @@
 package com.stanley.xie.emoney.service;
 
 import com.stanley.xie.emoney.exception.DuplicateUsernameException;
+import lombok.AllArgsConstructor;
 
 import java.util.UUID;
 
+@AllArgsConstructor
 public class UserRegistrationService {
     private final UserService userService;
-
-    public UserRegistrationService(UserService userService) {
-        this.userService = userService;
-    }
 
     public String register(String username) {
         if (isDuplicate(username)) {
@@ -32,6 +30,6 @@ public class UserRegistrationService {
     }
 
     private void saveUser(String username, String token) {
-        userService.saveUser(username, token);
+        userService.createUser(username, token);
     }
 }

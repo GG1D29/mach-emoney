@@ -39,8 +39,8 @@ class UserServiceTest {
     }
 
     @Test
-    void should_SaveUser_Successfully() {
-        userService.saveUser("username", "token");
+    void should_createUser_Successfully() {
+        userService.createUser("username", "token");
 
         Mockito.verify(userRepository).save(userArgumentCaptor.capture());
         User savedUser = userArgumentCaptor.getValue();
