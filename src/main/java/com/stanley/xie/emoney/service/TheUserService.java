@@ -1,5 +1,6 @@
 package com.stanley.xie.emoney.service;
 
+import com.stanley.xie.emoney.exception.UnauthorizedException;
 import com.stanley.xie.emoney.model.User;
 import com.stanley.xie.emoney.repository.UserRepository;
 
@@ -19,5 +20,10 @@ public class TheUserService implements UserService {
     public void saveUser(String username, String token) {
         User user = new User(username, token);
         userRepository.save(user);
+    }
+
+    @Override
+    public User getUserByToken(String token) {
+        return userRepository.findByUserToken(token).orElseThrow(UnauthorizedException::new);
     }
 }

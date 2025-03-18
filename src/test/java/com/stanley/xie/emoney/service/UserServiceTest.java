@@ -1,5 +1,6 @@
 package com.stanley.xie.emoney.service;
 
+import com.stanley.xie.emoney.exception.UnauthorizedException;
 import com.stanley.xie.emoney.model.User;
 import com.stanley.xie.emoney.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -7,7 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -43,5 +47,21 @@ class UserServiceTest {
         assertThat(savedUser.getUsername()).isEqualTo("username");
         assertThat(savedUser.getUserToken()).isEqualTo("token");
         assertThat(savedUser.getBalance()).isZero();
+    }
+
+    @Test
+    void should_ReturnUser_When_ValidToken() {
+        User expected = new User("username", "token");
+        Mockito.when(userRepository.findByUserToken("token")).thenReturn(Optional.of(expected));
+
+        User actual = userService.getUserByToken("token");
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void should_ThrowException_When_InvalidToken() {
+        Mockito.when(userRepository.findByUserToken("token")).thenReturn(Optional.empty());
+
+        assertThrows(UnauthorizedException.class, () -> userService.getUserByToken("token"));
     }
 }
