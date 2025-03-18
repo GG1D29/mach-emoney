@@ -5,14 +5,16 @@ import com.stanley.xie.emoney.exception.UsernameNotFoundException;
 import com.stanley.xie.emoney.model.User;
 import com.stanley.xie.emoney.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
+@Service
 public class TheUserService implements UserService {
     private final UserRepository userRepository;
 
     @Override
     public boolean isExist(String username) {
-        return userRepository.isExistsByUsername(username);
+        return userRepository.existsByUsername(username);
     }
 
     @Override

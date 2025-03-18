@@ -27,14 +27,14 @@ class UserServiceTest {
 
     @Test
     void should_True_When_Call_IsExist() {
-        Mockito.when(userRepository.isExistsByUsername("username")).thenReturn(true);
+        Mockito.when(userRepository.existsByUsername("username")).thenReturn(true);
         boolean actual = userService.isExist("username");
         assertThat(actual).isTrue();
     }
 
     @Test
     void should_False_When_Call_IsExist() {
-        Mockito.when(userRepository.isExistsByUsername("username")).thenReturn(false);
+        Mockito.when(userRepository.existsByUsername("username")).thenReturn(false);
         boolean actual = userService.isExist("username");
         assertThat(actual).isFalse();
     }
