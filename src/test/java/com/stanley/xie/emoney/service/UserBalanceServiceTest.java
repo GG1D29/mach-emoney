@@ -3,6 +3,8 @@ package com.stanley.xie.emoney.service;
 import com.stanley.xie.emoney.exception.InvalidTopUpAmountException;
 import com.stanley.xie.emoney.exception.UnauthorizedException;
 import com.stanley.xie.emoney.model.User;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -24,58 +26,67 @@ class UserBalanceServiceTest {
     @Captor
     private ArgumentCaptor<User> userArgumentCaptor;
 
-    @Test
-    void should_FetchUserBalance_Successfully() {
-        User user = new User();
-        user.setBalance(150);
+    @DisplayName("Fetch Balance Test")
+    @Nested
+    class FetchBalanceTests {
+        @Test
+        void should_FetchUserBalance_Successfully() {
+            User user = new User();
+            user.setBalance(150);
 
-        Mockito.when(userService.getUserByToken("userToken")).thenReturn(user);
-        int balance = service.fetchBalance("userToken");
-        assertThat(balance).isEqualTo(150);
+            Mockito.when(userService.getUserByToken("userToken")).thenReturn(user);
+            int balance = service.fetchBalance("userToken");
+            assertThat(balance).isEqualTo(150);
+        }
+
+        @Test
+        void should_Failed_FetchUserBalance_When_Unauthorized() {
+            Mockito.when(userService.getUserByToken("userToken")).thenThrow(UnauthorizedException.class);
+
+            assertThrows(UnauthorizedException.class, () -> service.fetchBalance("userToken"));
+        }
     }
 
-    @Test
-    void should_Failed_FetchUserBalance_When_Unauthorized() {
-        Mockito.when(userService.getUserByToken("userToken")).thenThrow(UnauthorizedException.class);
+    @DisplayName("Top Up Balance Test")
+    @Nested
+    class TopUpBalanceTests {
+        @Test
+        void should_TopUpBalance_Successfully() {
+            User user = new User();
+            user.setBalance(150);
+            Mockito.when(userService.getUserByToken("userToken")).thenReturn(user);
 
-        assertThrows(UnauthorizedException.class, () -> service.fetchBalance("userToken"));
+            service.topUp("userToken", 100);
+
+            Mockito.verify(userService).updateUser(userArgumentCaptor.capture());
+            User savedUser = userArgumentCaptor.getValue();
+            assertThat(savedUser.getBalance()).isEqualTo(250);
+        }
+
+        @Test
+        void should_Failed_TopUpBalance_When_ZeroAmount() {
+            assertThrows(InvalidTopUpAmountException.class, () -> service.topUp("userToken", 0));
+            Mockito.verify(userService, never()).updateUser(any(User.class));
+        }
+
+        @Test
+        void should_Failed_TopUpBalance_When_NegativeAmount() {
+            assertThrows(InvalidTopUpAmountException.class, () -> service.topUp("userToken", -100));
+            Mockito.verify(userService, never()).updateUser(any(User.class));
+        }
+
+        @Test
+        void should_Failed_TopUpBalance_When_ExceedingMaximumAmount() {
+            assertThrows(InvalidTopUpAmountException.class, () -> service.topUp("userToken", 10000001));
+            Mockito.verify(userService, never()).updateUser(any(User.class));
+        }
+
+        @Test
+        void should_Failed_TopUpBalance_When_Unauthorized() {
+            Mockito.when(userService.getUserByToken("userToken")).thenThrow(UnauthorizedException.class);
+
+            assertThrows(UnauthorizedException.class, () -> service.topUp("userToken", 1000));
+        }
     }
 
-    @Test
-    void should_TopUpBalance_Successfully() {
-        User user = new User();
-        user.setBalance(150);
-        Mockito.when(userService.getUserByToken("userToken")).thenReturn(user);
-
-        service.topUp("userToken", 100);
-
-        Mockito.verify(userService).updateUser(userArgumentCaptor.capture());
-        User savedUser = userArgumentCaptor.getValue();
-        assertThat(savedUser.getBalance()).isEqualTo(250);
-    }
-
-    @Test
-    void should_Failed_TopUpBalance_When_ZeroAmount() {
-        assertThrows(InvalidTopUpAmountException.class, () -> service.topUp("userToken", 0));
-        Mockito.verify(userService, never()).updateUser(any(User.class));
-    }
-
-    @Test
-    void should_Failed_TopUpBalance_When_NegativeAmount() {
-        assertThrows(InvalidTopUpAmountException.class, () -> service.topUp("userToken", -100));
-        Mockito.verify(userService, never()).updateUser(any(User.class));
-    }
-
-    @Test
-    void should_Failed_TopUpBalance_When_ExceedingMaximumAmount() {
-        assertThrows(InvalidTopUpAmountException.class, () -> service.topUp("userToken", 10000001));
-        Mockito.verify(userService, never()).updateUser(any(User.class));
-    }
-
-    @Test
-    void should_Failed_TopUpBalance_When_Unauthorized() {
-        Mockito.when(userService.getUserByToken("userToken")).thenThrow(UnauthorizedException.class);
-
-        assertThrows(UnauthorizedException.class, () -> service.topUp("userToken", 1000));
-    }
 }

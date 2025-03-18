@@ -1,5 +1,6 @@
 package com.stanley.xie.emoney.service;
 
+import com.stanley.xie.emoney.exception.InvalidTopUpAmountException;
 import com.stanley.xie.emoney.exception.UnauthorizedException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,17 @@ public class UserBalanceServiceIT {
         userBalanceService.topUp(token, 15);
         balance = userBalanceService.fetchBalance(token);
         assertThat(balance).isEqualTo(25);
+    }
+
+    @Test
+    void should_Failed_TopUpBalance_When_InvalidAmount() {
+        String token = userRegistrationService.register("shenli");
+        assertThrows(InvalidTopUpAmountException.class, () -> userBalanceService.topUp(token, 0));
+
+        assertThrows(InvalidTopUpAmountException.class, () -> userBalanceService.topUp(token, -10));
+
+        assertThrows(InvalidTopUpAmountException.class, () -> userBalanceService.topUp(token, 10000001));
+
     }
 
     @Test
