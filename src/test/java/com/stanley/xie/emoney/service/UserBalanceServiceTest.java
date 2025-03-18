@@ -14,15 +14,32 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
-class BalanceTopUpServiceTest {
+class UserBalanceServiceTest {
     @InjectMocks
-    private BalanceTopUpService service;
+    private TheUserBalanceService service;
 
     @Mock
     private UserService userService;
 
     @Captor
     private ArgumentCaptor<User> userArgumentCaptor;
+
+    @Test
+    void should_FetchUserBalance_Successfully() {
+        User user = new User();
+        user.setBalance(150);
+
+        Mockito.when(userService.getUserByToken("userToken")).thenReturn(user);
+        int balance = service.fetchBalance("userToken");
+        assertThat(balance).isEqualTo(150);
+    }
+
+    @Test
+    void should_Failed_FetchUserBalance_When_Unauthorized() {
+        Mockito.when(userService.getUserByToken("userToken")).thenThrow(UnauthorizedException.class);
+
+        assertThrows(UnauthorizedException.class, () -> service.fetchBalance("userToken"));
+    }
 
     @Test
     void should_TopUpBalance_Successfully() {
