@@ -2,6 +2,8 @@ package com.stanley.xie.emoney.service;
 
 import com.stanley.xie.emoney.exception.DuplicateUsernameException;
 
+import java.util.UUID;
+
 public class UserRegistrationService {
     private final UserService userService;
 
@@ -10,13 +12,26 @@ public class UserRegistrationService {
     }
 
     public String register(String username) {
-        boolean isUserExist = userService.isExist(username);
-        if (isUserExist) {
+        if (isDuplicate(username)) {
             throw new DuplicateUsernameException();
         }
 
-        userService.saveUser(username, "abc");
-        return "abc";
+        String token = createToken();
+        saveUser(username, token);
+
+        return token;
     }
 
+    private boolean isDuplicate(String username) {
+        return userService.isExist(username);
+    }
+
+    private String createToken() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
+    }
+
+    private void saveUser(String username, String token) {
+        userService.saveUser(username, token);
+    }
 }
