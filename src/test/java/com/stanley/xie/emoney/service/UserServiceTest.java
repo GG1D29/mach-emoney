@@ -64,4 +64,12 @@ class UserServiceTest {
 
         assertThrows(UnauthorizedException.class, () -> userService.getUserByToken("token"));
     }
+
+    @Test
+    void should_UpdateUser_Successfully() {
+        User expected = new User("username", "token");
+        userService.updateUser(expected);
+
+        Mockito.verify(userRepository).save(expected);
+    }
 }

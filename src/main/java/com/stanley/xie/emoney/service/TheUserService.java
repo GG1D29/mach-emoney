@@ -24,4 +24,9 @@ public class TheUserService implements UserService {
     public User getUserByToken(String token) {
         return userRepository.findByUserToken(token).orElseThrow(UnauthorizedException::new);
     }
+
+    @Override
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
 }

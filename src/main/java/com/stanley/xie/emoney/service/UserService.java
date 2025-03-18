@@ -9,4 +9,5 @@ public interface UserService {
 
     User getUserByToken(String token);
 
+    void updateUser(User user);
 }
