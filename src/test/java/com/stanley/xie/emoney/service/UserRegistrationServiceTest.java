@@ -17,7 +17,7 @@ import static org.mockito.Mockito.never;
 @ExtendWith(MockitoExtension.class)
 class UserRegistrationServiceTest {
     @InjectMocks
-    private UserRegistrationService userRegistrationService;
+    private TheUserRegistrationService userRegistrationService;
 
     @Mock
     private UserService userService;
