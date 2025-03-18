@@ -18,7 +18,7 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 class MoneyTransferServiceTest {
     @InjectMocks
-    private MoneyTransferService service;
+    private TheMoneyTransferService service;
 
     @Mock
     private UserService userService;
