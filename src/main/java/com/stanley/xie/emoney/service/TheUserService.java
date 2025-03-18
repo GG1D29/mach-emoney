@@ -1,6 +1,7 @@
 package com.stanley.xie.emoney.service;
 
 import com.stanley.xie.emoney.exception.UnauthorizedException;
+import com.stanley.xie.emoney.exception.UsernameNotFoundException;
 import com.stanley.xie.emoney.model.User;
 import com.stanley.xie.emoney.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -28,5 +29,10 @@ public class TheUserService implements UserService {
     @Override
     public void updateUser(User user) {
         userRepository.save(user);
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(UsernameNotFoundException::new);
     }
 }

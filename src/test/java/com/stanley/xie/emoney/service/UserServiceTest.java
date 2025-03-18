@@ -1,6 +1,7 @@
 package com.stanley.xie.emoney.service;
 
 import com.stanley.xie.emoney.exception.UnauthorizedException;
+import com.stanley.xie.emoney.exception.UsernameNotFoundException;
 import com.stanley.xie.emoney.model.User;
 import com.stanley.xie.emoney.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class UserServiceTest {
     }
 
     @Test
-    void should_ReturnUser_When_ValidToken() {
+    void should_FindUserByToken_Successfully() {
         User expected = new User("username", "token");
         Mockito.when(userRepository.findByUserToken("token")).thenReturn(Optional.of(expected));
 
@@ -59,7 +60,7 @@ class UserServiceTest {
     }
 
     @Test
-    void should_ThrowException_When_InvalidToken() {
+    void should_Failed_FindUserByToken_When_InvalidToken() {
         Mockito.when(userRepository.findByUserToken("token")).thenReturn(Optional.empty());
 
         assertThrows(UnauthorizedException.class, () -> userService.getUserByToken("token"));
@@ -71,5 +72,21 @@ class UserServiceTest {
         userService.updateUser(expected);
 
         Mockito.verify(userRepository).save(expected);
+    }
+
+    @Test
+    void should_FindUserByName_Successfully() {
+        User expected = new User("username", "token");
+        Mockito.when(userRepository.findByUsername("username")).thenReturn(Optional.of(expected));
+
+        User actual = userService.getUserByUsername("username");
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void should_Failed_FindUserByName_When_UsernameNotFound() {
+        Mockito.when(userRepository.findByUsername("username")).thenReturn(Optional.empty());
+
+        assertThrows(UsernameNotFoundException.class, () -> userService.getUserByUsername("username"));
     }
 }
