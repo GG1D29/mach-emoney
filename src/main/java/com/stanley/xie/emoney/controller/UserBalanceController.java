@@ -1,5 +1,6 @@
 package com.stanley.xie.emoney.controller;
 
+import com.stanley.xie.emoney.payload.CommonApiResponse;
 import com.stanley.xie.emoney.payload.TopUpBalanceRequest;
 import com.stanley.xie.emoney.payload.UserBalanceResponse;
 import com.stanley.xie.emoney.service.UserBalanceService;
@@ -22,6 +23,6 @@ public class UserBalanceController {
     public ResponseEntity<?> topUpUserBalance(@RequestHeader(name = "Authorization") String token,
                                               @RequestBody TopUpBalanceRequest request) {
         userBalanceService.topUp(token, request.getAmount());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new CommonApiResponse("Successful Top Up"));
     }
 }

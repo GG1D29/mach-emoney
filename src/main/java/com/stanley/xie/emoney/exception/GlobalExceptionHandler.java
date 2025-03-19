@@ -19,4 +19,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleUnauthorized() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @ExceptionHandler(InvalidTopUpAmountException.class)
+    public ResponseEntity<ApiError> handleInvalidTopUpAmount(Exception ex) {
+        ApiError error = new ApiError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
 }
