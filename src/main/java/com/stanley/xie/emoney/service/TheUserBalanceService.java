@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Service
 public class TheUserBalanceService implements UserBalanceService {
-    private static final int TOP_UP_LIMIT = 10000000;
+    private static final int MAXIMUM_TOP_UP_LIMIT = 10000000;
+    private static final int MINIMUM_TOP_UP_LIMIT = 1;
 
     private final UserService userService;
 
@@ -27,7 +28,7 @@ public class TheUserBalanceService implements UserBalanceService {
     }
 
     private void validateAmount(int amount) {
-        if (amount <= 0 || amount > TOP_UP_LIMIT) {
+        if (amount < MINIMUM_TOP_UP_LIMIT || amount > MAXIMUM_TOP_UP_LIMIT) {
             throw new InvalidTopUpAmountException();
         }
     }
