@@ -20,9 +20,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @ExceptionHandler(InvalidTopUpAmountException.class)
-    public ResponseEntity<ApiError> handleInvalidTopUpAmount(Exception ex) {
+    @ExceptionHandler({InvalidTopUpAmountException.class, InsufficientBalanceException.class})
+    public ResponseEntity<ApiError> handleBadRequest(Exception ex) {
         ApiError error = new ApiError(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFound(Exception ex) {
+        ApiError error = new ApiError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }
