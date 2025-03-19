@@ -61,4 +61,13 @@ class UserControllerTest {
         CreateUserRequest request = new CreateUserRequest("shenli");
         return objectMapper.writeValueAsString(request);
     }
+
+    @Test
+    void should_Failed_RegisterNewUser_When_EmptyBody() throws Exception {
+
+        mockMvc.perform(post("/users"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("Required request body is missing")));
+    }
 }

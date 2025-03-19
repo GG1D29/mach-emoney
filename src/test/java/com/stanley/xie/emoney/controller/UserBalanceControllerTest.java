@@ -98,4 +98,11 @@ class UserBalanceControllerTest {
         TopUpBalanceRequest request = new TopUpBalanceRequest(10);
         return objectMapper.writeValueAsString(request);
     }
+
+    @Test
+    void should_Failed_FetchBalance_When_EmptyHeader() throws Exception {
+        mockMvc.perform(get("/user-balance"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
 }
