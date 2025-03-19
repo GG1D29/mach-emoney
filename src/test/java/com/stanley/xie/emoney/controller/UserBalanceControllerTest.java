@@ -57,8 +57,7 @@ class UserBalanceControllerTest {
 
     @Test
     void should_TopUpUserBalance_Successfully() throws Exception {
-        TopUpBalanceRequest request = new TopUpBalanceRequest(100);
-        String payload = objectMapper.writeValueAsString(request);
+        String payload = getTopUpBalanceRequest();
 
         mockMvc.perform(post("/user-balance")
                         .header("Authorization", "shToken")
@@ -70,10 +69,9 @@ class UserBalanceControllerTest {
 
     @Test
     void should_Failed_TopUpUserBalance_When_InvalidAmount() throws Exception {
-        doThrow(InvalidTopUpAmountException.class).when(userBalanceService).topUp("shToken", 0);
+        doThrow(InvalidTopUpAmountException.class).when(userBalanceService).topUp("shToken", 10);
 
-        TopUpBalanceRequest request = new TopUpBalanceRequest(0);
-        String payload = objectMapper.writeValueAsString(request);
+        String payload = getTopUpBalanceRequest();
 
         mockMvc.perform(post("/user-balance")
                         .header("Authorization", "shToken")
@@ -85,15 +83,19 @@ class UserBalanceControllerTest {
 
     @Test
     void should_Failed_TopUpUserBalance_When_Unauthorized() throws Exception {
-        doThrow(UnauthorizedException.class).when(userBalanceService).topUp("shToken", 100);
+        doThrow(UnauthorizedException.class).when(userBalanceService).topUp("shToken", 10);
 
-        TopUpBalanceRequest request = new TopUpBalanceRequest(100);
-        String payload = objectMapper.writeValueAsString(request);
+        String payload = getTopUpBalanceRequest();
 
         mockMvc.perform(post("/user-balance")
                         .header("Authorization", "shToken")
                         .contentType(MediaType.APPLICATION_JSON).content(payload))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+    private String getTopUpBalanceRequest() throws Exception {
+        TopUpBalanceRequest request = new TopUpBalanceRequest(10);
+        return objectMapper.writeValueAsString(request);
     }
 }

@@ -42,7 +42,6 @@ class UserBalanceServiceTest {
         @Test
         void should_Failed_FetchUserBalance_When_Unauthorized() {
             Mockito.when(userService.getUserByToken("userToken")).thenThrow(UnauthorizedException.class);
-
             assertThrows(UnauthorizedException.class, () -> service.fetchBalance("userToken"));
         }
     }
@@ -84,7 +83,6 @@ class UserBalanceServiceTest {
         @Test
         void should_Failed_TopUpBalance_When_Unauthorized() {
             Mockito.when(userService.getUserByToken("userToken")).thenThrow(UnauthorizedException.class);
-
             assertThrows(UnauthorizedException.class, () -> service.topUp("userToken", 1000));
         }
     }

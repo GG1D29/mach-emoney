@@ -35,8 +35,7 @@ class MoneyTransferControllerTest {
 
     @Test
     void should_TransferMoney_Successfully() throws Exception {
-        MoneyTransferRequest request = new MoneyTransferRequest("shenli", 150);
-        String payload = objectMapper.writeValueAsString(request);
+        String payload = getMoneyTransferRequest();
 
         mockMvc.perform(post("/money-transfer")
                         .header("Authorization", "shToken")
@@ -48,10 +47,9 @@ class MoneyTransferControllerTest {
 
     @Test
     void should_Failed_TransferMoney_When_InsufficientBalance() throws Exception {
-        doThrow(InsufficientBalanceException.class).when(moneyTransferService).transfer("shToken", "shenli", 150);
+        doThrow(InsufficientBalanceException.class).when(moneyTransferService).transfer("shToken", "shenli", 10);
 
-        MoneyTransferRequest request = new MoneyTransferRequest("shenli", 150);
-        String payload = objectMapper.writeValueAsString(request);
+        String payload = getMoneyTransferRequest();
 
         mockMvc.perform(post("/money-transfer")
                         .header("Authorization", "shToken")
@@ -63,10 +61,9 @@ class MoneyTransferControllerTest {
 
     @Test
     void should_Failed_TransferMoney_When_Unauthorized() throws Exception {
-        doThrow(UnauthorizedException.class).when(moneyTransferService).transfer("shToken", "shenli", 150);
+        doThrow(UnauthorizedException.class).when(moneyTransferService).transfer("shToken", "shenli", 10);
 
-        MoneyTransferRequest request = new MoneyTransferRequest("shenli", 150);
-        String payload = objectMapper.writeValueAsString(request);
+        String payload = getMoneyTransferRequest();
 
         mockMvc.perform(post("/money-transfer")
                         .header("Authorization", "shToken")
@@ -77,10 +74,9 @@ class MoneyTransferControllerTest {
 
     @Test
     void should_Failed_TransferMoney_When_TargetUserNotFound() throws Exception {
-        doThrow(UsernameNotFoundException.class).when(moneyTransferService).transfer("shToken", "shenli", 150);
+        doThrow(UsernameNotFoundException.class).when(moneyTransferService).transfer("shToken", "shenli", 10);
 
-        MoneyTransferRequest request = new MoneyTransferRequest("shenli", 150);
-        String payload = objectMapper.writeValueAsString(request);
+        String payload = getMoneyTransferRequest();
 
         mockMvc.perform(post("/money-transfer")
                         .header("Authorization", "shToken")
@@ -88,5 +84,10 @@ class MoneyTransferControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error", is("Username not found")));
+    }
+
+    private String getMoneyTransferRequest() throws Exception {
+        MoneyTransferRequest request = new MoneyTransferRequest("shenli", 10);
+        return objectMapper.writeValueAsString(request);
     }
 }

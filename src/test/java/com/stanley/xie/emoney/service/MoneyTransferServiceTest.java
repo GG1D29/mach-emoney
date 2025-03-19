@@ -28,11 +28,8 @@ class MoneyTransferServiceTest {
 
     @Test
     void should_TransferMoney_Successfully() {
-        User fromUser = new User();
-        fromUser.setBalance(10);
-
-        User toUser = new User();
-        toUser.setBalance(10);
+        User fromUser = getUserWithBalance();
+        User toUser = getUserWithBalance();
 
         Mockito.when(userService.getUserByToken("userToken")).thenReturn(fromUser);
         Mockito.when(userService.getUserByUsername("targetUser")).thenReturn(toUser);
@@ -62,8 +59,7 @@ class MoneyTransferServiceTest {
 
     @Test
     void should_Failed_TransferMoney_When_NotEnoughBalance() {
-        User fromUser = new User();
-        fromUser.setBalance(10);
+        User fromUser = getUserWithBalance();
 
         Mockito.when(userService.getUserByToken("userToken")).thenReturn(fromUser);
 
@@ -81,16 +77,19 @@ class MoneyTransferServiceTest {
 
     @Test
     void should_Failed_TransferMoney_When_TargetUsernameNotFound() {
-        User fromUser = new User();
-        fromUser.setBalance(10);
-
-        User toUser = new User();
-        toUser.setBalance(10);
+        User fromUser = getUserWithBalance();
 
         Mockito.when(userService.getUserByToken("userToken")).thenReturn(fromUser);
         Mockito.when(userService.getUserByUsername("targetUser")).thenThrow(UsernameNotFoundException.class);
 
         assertThrows(UsernameNotFoundException.class,
                 () -> service.transfer("userToken", "targetUser", 5));
+    }
+
+    private User getUserWithBalance() {
+        User user = new User();
+        user.setBalance(10);
+
+        return user;
     }
 }

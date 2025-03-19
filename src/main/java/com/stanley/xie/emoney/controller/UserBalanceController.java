@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 public class UserBalanceController {
-    private UserBalanceService userBalanceService;
+    private final UserBalanceService userBalanceService;
 
     @GetMapping("/user-balance")
     public ResponseEntity<?> getUserBalance(@RequestHeader(name = "Authorization") String token) {
