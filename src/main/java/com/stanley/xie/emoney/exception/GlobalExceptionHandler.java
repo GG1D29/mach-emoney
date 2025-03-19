@@ -14,4 +14,9 @@ public class GlobalExceptionHandler {
         ApiError error = new ApiError(ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiError> handleUnauthorized() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
 }
