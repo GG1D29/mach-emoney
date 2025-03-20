@@ -19,9 +19,9 @@ public class TheUserBalanceService implements UserBalanceService {
 
     @Override
     public void topUp(String token, int amount) {
-        validateAmount(amount);
-
         User user = getUser(token);
+
+        validateAmount(amount);
         updateBalance(user, amount);
     }
 
