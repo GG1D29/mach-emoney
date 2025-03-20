@@ -12,21 +12,30 @@ public class TheMoneyTransferService implements MoneyTransferService {
     private final UserService userService;
 
     @Override
-    public void transfer(String token, String toUsername, int amount) {
-        User fromUser = userService.getUserByToken(token);
-        User toUser = userService.getUserByUsername(toUsername);
+    public void transfer(String senderToken, String receiver, int amount) {
+        User senderUser = userService.getUserByToken(senderToken);
+        User receiverUser = userService.getUserByUsername(receiver);
 
-        validateAmount(amount, fromUser.getBalance());
+        validateAmount(amount, senderUser.getBalance());
 
-        fromUser.setBalance(fromUser.getBalance() - amount);
-        toUser.setBalance(toUser.getBalance() + amount);
-
-        userService.updateUser(fromUser);
-        userService.updateUser(toUser);
+        updateSenderBalance(senderUser, amount);
+        updateReceiverBalance(receiverUser, amount);
     }
 
     private void validateAmount(int amount, int balance) {
         AmountValidation amountValidation = new TransferAmountValidation(balance);
         amountValidation.validate(amount);
+    }
+
+    private void updateSenderBalance(User user, int amount) {
+        int newBalance = user.getBalance() - amount;
+        user.setBalance(newBalance);
+        userService.updateUser(user);
+    }
+
+    private void updateReceiverBalance(User user, int amount) {
+        int newBalance = user.getBalance() + amount;
+        user.setBalance(newBalance);
+        userService.updateUser(user);
     }
 }
