@@ -47,12 +47,16 @@ class MoneyTransferServiceTest {
 
     @Test
     void should_Failed_TransferMoney_When_ZeroAmount() {
+        User fromUser = getUserWithBalance();
+        Mockito.when(userService.getUserByToken("userToken")).thenReturn(fromUser);
         assertThrows(InsufficientBalanceException.class,
                 () -> service.transfer("userToken", "targetUser", 0));
     }
 
     @Test
     void should_Failed_TransferMoney_When_NegativeAmount() {
+        User fromUser = getUserWithBalance();
+        Mockito.when(userService.getUserByToken("userToken")).thenReturn(fromUser);
         assertThrows(InsufficientBalanceException.class,
                 () -> service.transfer("userToken", "targetUser", -10));
     }

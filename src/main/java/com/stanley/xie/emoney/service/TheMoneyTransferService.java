@@ -1,7 +1,8 @@
 package com.stanley.xie.emoney.service;
 
-import com.stanley.xie.emoney.exception.InsufficientBalanceException;
 import com.stanley.xie.emoney.model.User;
+import com.stanley.xie.emoney.service.validator.AmountValidation;
+import com.stanley.xie.emoney.service.validator.TransferAmountValidation;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +13,8 @@ public class TheMoneyTransferService implements MoneyTransferService {
 
     @Override
     public void transfer(String token, String toUsername, int amount) {
-        if (amount <= 0) {
-            throw new InsufficientBalanceException();
-        }
-
         User fromUser = userService.getUserByToken(token);
-        if (fromUser.getBalance() < amount) {
-            throw new InsufficientBalanceException();
-        }
+        validateAmount(amount, fromUser.getBalance());
 
         fromUser.setBalance(fromUser.getBalance() - amount);
 
@@ -28,5 +23,10 @@ public class TheMoneyTransferService implements MoneyTransferService {
 
         userService.updateUser(fromUser);
         userService.updateUser(toUser);
+    }
+
+    private void validateAmount(int amount, int balance) {
+        AmountValidation amountValidation = new TransferAmountValidation(balance);
+        amountValidation.validate(amount);
     }
 }

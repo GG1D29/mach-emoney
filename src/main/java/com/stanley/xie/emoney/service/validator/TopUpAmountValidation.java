@@ -9,7 +9,6 @@ import java.util.List;
 public class TopUpAmountValidation implements AmountValidation {
     private final List<AmountValidation> amountValidations;
 
-    //TODO think again
     public TopUpAmountValidation() {
         amountValidations = Arrays.asList(new MinTopUpAmountValidation(), new MaxTopUpAmountValidation());
     }
