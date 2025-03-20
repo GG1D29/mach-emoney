@@ -22,7 +22,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @ExceptionHandler({InvalidTopUpAmountException.class, InsufficientBalanceException.class})
+    @ExceptionHandler({InvalidTopUpAmountException.class, InsufficientBalanceException.class,
+            InvalidTransferAmountException.class})
     public ResponseEntity<ApiError> handleBadRequest(Exception ex) {
         ApiError error = new ApiError(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);

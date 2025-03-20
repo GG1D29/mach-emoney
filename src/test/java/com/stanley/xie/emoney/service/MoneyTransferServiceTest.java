@@ -1,6 +1,7 @@
 package com.stanley.xie.emoney.service;
 
 import com.stanley.xie.emoney.exception.InsufficientBalanceException;
+import com.stanley.xie.emoney.exception.InvalidTransferAmountException;
 import com.stanley.xie.emoney.exception.UnauthorizedException;
 import com.stanley.xie.emoney.exception.UsernameNotFoundException;
 import com.stanley.xie.emoney.model.User;
@@ -49,7 +50,7 @@ class MoneyTransferServiceTest {
     void should_Failed_TransferMoney_When_ZeroAmount() {
         User fromUser = getUserWithBalance();
         Mockito.when(userService.getUserByToken("userToken")).thenReturn(fromUser);
-        assertThrows(InsufficientBalanceException.class,
+        assertThrows(InvalidTransferAmountException.class,
                 () -> service.transfer("userToken", "targetUser", 0));
     }
 
@@ -57,7 +58,7 @@ class MoneyTransferServiceTest {
     void should_Failed_TransferMoney_When_NegativeAmount() {
         User fromUser = getUserWithBalance();
         Mockito.when(userService.getUserByToken("userToken")).thenReturn(fromUser);
-        assertThrows(InsufficientBalanceException.class,
+        assertThrows(InvalidTransferAmountException.class,
                 () -> service.transfer("userToken", "targetUser", -10));
     }
 
@@ -87,7 +88,7 @@ class MoneyTransferServiceTest {
         Mockito.when(userService.getUserByUsername("targetUser")).thenThrow(UsernameNotFoundException.class);
 
         assertThrows(UsernameNotFoundException.class,
-                () -> service.transfer("userToken", "targetUser", 5));
+                () -> service.transfer("userToken", "targetUser", -5));
     }
 
     private User getUserWithBalance() {

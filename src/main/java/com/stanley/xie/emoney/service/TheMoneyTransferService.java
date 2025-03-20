@@ -14,11 +14,11 @@ public class TheMoneyTransferService implements MoneyTransferService {
     @Override
     public void transfer(String token, String toUsername, int amount) {
         User fromUser = userService.getUserByToken(token);
+        User toUser = userService.getUserByUsername(toUsername);
+
         validateAmount(amount, fromUser.getBalance());
 
         fromUser.setBalance(fromUser.getBalance() - amount);
-
-        User toUser = userService.getUserByUsername(toUsername);
         toUser.setBalance(toUser.getBalance() + amount);
 
         userService.updateUser(fromUser);

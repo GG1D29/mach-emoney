@@ -2,6 +2,7 @@ package com.stanley.xie.emoney.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stanley.xie.emoney.exception.InsufficientBalanceException;
+import com.stanley.xie.emoney.exception.InvalidTransferAmountException;
 import com.stanley.xie.emoney.exception.UnauthorizedException;
 import com.stanley.xie.emoney.exception.UsernameNotFoundException;
 import com.stanley.xie.emoney.payload.MoneyTransferRequest;
@@ -60,6 +61,21 @@ class MoneyTransferControllerTest {
     }
 
     @Test
+    void should_Failed_TransferMoney_When_BelowMinimumAmount() throws Exception {
+        doThrow(InvalidTransferAmountException.class).when(moneyTransferService).transfer(
+                "shToken", "shenli", -10);
+
+        String payload = getNegativeMoneyTransferRequest();
+
+        mockMvc.perform(post("/money-transfer")
+                        .header("Authorization", "shToken")
+                        .contentType(MediaType.APPLICATION_JSON).content(payload))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("Invalid transfer amount")));
+    }
+
+    @Test
     void should_Failed_TransferMoney_When_Unauthorized() throws Exception {
         doThrow(UnauthorizedException.class).when(moneyTransferService).transfer("shToken", "shenli", 10);
 
@@ -88,6 +104,11 @@ class MoneyTransferControllerTest {
 
     private String getMoneyTransferRequest() throws Exception {
         MoneyTransferRequest request = new MoneyTransferRequest("shenli", 10);
+        return objectMapper.writeValueAsString(request);
+    }
+
+    private String getNegativeMoneyTransferRequest() throws Exception {
+        MoneyTransferRequest request = new MoneyTransferRequest("shenli", -10);
         return objectMapper.writeValueAsString(request);
     }
 }
