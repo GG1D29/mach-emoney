@@ -3,6 +3,7 @@ package com.stanley.xie.emoney.service;
 import com.stanley.xie.emoney.exception.InvalidTopUpAmountException;
 import com.stanley.xie.emoney.exception.UnauthorizedException;
 import com.stanley.xie.emoney.model.User;
+import com.stanley.xie.emoney.service.validator.TopUpAmountValidation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,9 @@ class UserBalanceServiceTest {
 
     @Mock
     private UserService userService;
+
+    @Spy
+    private TopUpAmountValidation topUpAmountValidation;
 
     @Captor
     private ArgumentCaptor<User> userArgumentCaptor;

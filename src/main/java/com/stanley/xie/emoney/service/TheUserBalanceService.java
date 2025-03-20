@@ -1,17 +1,15 @@
 package com.stanley.xie.emoney.service;
 
-import com.stanley.xie.emoney.exception.InvalidTopUpAmountException;
 import com.stanley.xie.emoney.model.User;
+import com.stanley.xie.emoney.service.validator.AmountValidation;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
 public class TheUserBalanceService implements UserBalanceService {
-    private static final int MAXIMUM_TOP_UP_LIMIT = 10000000;
-    private static final int MINIMUM_TOP_UP_LIMIT = 1;
-
     private final UserService userService;
+    private final AmountValidation topUpAmountValidation;
 
     @Override
     public int fetchBalance(String token) {
@@ -28,9 +26,7 @@ public class TheUserBalanceService implements UserBalanceService {
     }
 
     private void validateAmount(int amount) {
-        if (amount < MINIMUM_TOP_UP_LIMIT || amount > MAXIMUM_TOP_UP_LIMIT) {
-            throw new InvalidTopUpAmountException();
-        }
+        topUpAmountValidation.validate(amount);
     }
 
     private User getUser(String token) {
